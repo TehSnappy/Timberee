@@ -1,0 +1,104 @@
+@import "tailwindcss" source(none);
+@source "../css";
+@source "../js";
+@source "../../lib/timberee_web";
+
+@plugin "../vendor/heroicons";
+@plugin "../vendor/daisyui" {
+  themes: false;
+}
+
+/* Nature-inspired light theme with earthy tones */
+@plugin "../vendor/daisyui-theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0.01 85);
+  --color-base-200: oklch(95% 0.015 85);
+  --color-base-300: oklch(92% 0.02 85);
+  --color-base-content: oklch(25% 0.02 85);
+  --color-primary: oklch(55% 0.18 145);
+  --color-primary-content: oklch(98% 0.01 145);
+  --color-secondary: oklch(65% 0.15 85);
+  --color-secondary-content: oklch(25% 0.02 85);
+  --color-accent: oklch(70% 0.18 200);
+  --color-accent-content: oklch(25% 0.02 200);
+  --color-neutral: oklch(45% 0.05 85);
+  --color-neutral-content: oklch(98% 0.01 85);
+  --color-success: oklch(65% 0.18 145);
+  --color-success-content: oklch(98% 0.01 145);
+  --color-warning: oklch(75% 0.18 65);
+  --color-warning-content: oklch(25% 0.02 65);
+  --color-error: oklch(60% 0.18 25);
+  --color-error-content: oklch(98% 0.01 25);
+  --color-info: oklch(70% 0.15 220);
+  --color-info-content: oklch(25% 0.02 220);
+}
+
+/* Nature-inspired dark theme with deep earthy tones */
+@plugin "../vendor/daisyui-theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(22% 0.02 85);
+  --color-base-200: oklch(18% 0.02 85);
+  --color-base-300: oklch(15% 0.02 85);
+  --color-base-content: oklch(85% 0.01 85);
+  --color-primary: oklch(60% 0.18 145);
+  --color-primary-content: oklch(95% 0.01 145);
+  --color-secondary: oklch(50% 0.15 85);
+  --color-secondary-content: oklch(95% 0.01 85);
+  --color-accent: oklch(65% 0.18 200);
+  --color-accent-content: oklch(95% 0.01 200);
+  --color-neutral: oklch(35% 0.05 85);
+  --color-neutral-content: oklch(95% 0.01 85);
+  --color-success: oklch(60% 0.18 145);
+  --color-success-content: oklch(95% 0.01 145);
+  --color-warning: oklch(70% 0.18 65);
+  --color-warning-content: oklch(95% 0.01 65);
+  --color-error: oklch(55% 0.18 25);
+  --color-error-content: oklch(95% 0.01 25);
+  --color-info: oklch(65% 0.15 220);
+  --color-info-content: oklch(95% 0.01 220);
+}
+
+/* Custom styles for nature-inspired design */
+@layer base {
+  :root {
+    --gradient-amber: linear-gradient(
+      135deg,
+      oklch(95% 0.08 65) 0%,
+      oklch(92% 0.12 75) 100%
+    );
+    --gradient-emerald: linear-gradient(
+      135deg,
+      oklch(92% 0.08 155) 0%,
+      oklch(88% 0.12 145) 100%
+    );
+  }
+}
+
+/* Animations and transitions */
+@layer utilities {
+  .transition-height {
+    transition: height 1000ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .water-gradient {
+    background: linear-gradient(
+      to top,
+      oklch(60% 0.18 220),
+      oklch(70% 0.15 200)
+    );
+  }
+
+  .drought-text {
+    color: oklch(45% 0.15 45);
+  }
+
+  .water-text {
+    color: oklch(55% 0.18 200);
+  }
+}
