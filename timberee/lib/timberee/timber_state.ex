@@ -18,49 +18,39 @@ defmodule Timberee.TimberState do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  @doc """
-  Get the current state.
-  Returns: %{water_level: float, time_remaining: integer, season: string}
-  """
   def get_state do
     GenServer.call(__MODULE__, :get_state)
   end
 
-  @doc """
-  Update the water level (0-100%)
-  """
   def update_water_level(level) when level >= 0 and level <= 100 do
-    GenServer.cast(__MODULE__, {:update_water_level, level})
+    GenServer.call(__MODULE__, {:update_water_level, level})
   end
 
-  @doc """
-  Update the time remaining (in seconds)
-  """
   def update_time_remaining(seconds) when is_integer(seconds) and seconds >= 0 do
-    GenServer.cast(__MODULE__, {:update_time_remaining, seconds})
+    GenServer.call(__MODULE__, {:update_time_remaining, seconds})
   end
 
   @doc """
   Update the season status
   """
   def update_season(season) when is_binary(season) do
-    GenServer.cast(__MODULE__, {:update_season, season})
+    GenServer.call(__MODULE__, {:update_season, season})
   end
 
   def update_upcoming_season(upcoming_season) when is_binary(upcoming_season) do
-    GenServer.cast(__MODULE__, {:update_upcoming_season, upcoming_season})
+    GenServer.call(__MODULE__, {:update_upcoming_season, upcoming_season})
   end
 
   def update_reservoirs(name, fill_percent) when is_binary(name) and is_number(fill_percent) do
-    GenServer.cast(__MODULE__, {:update_reservoirs, name, fill_percent})
+    GenServer.call(__MODULE__, {:update_reservoirs, name, fill_percent})
   end
 
   def update_battery_level(level) when level >= 0 and level <= 100 do
-    GenServer.cast(__MODULE__, {:update_battery_level, level})
+    GenServer.call(__MODULE__, {:update_battery_level, level})
   end
 
   def update_flow_level(status) do
-    GenServer.cast(__MODULE__, {:update_flow_level, status})
+    GenServer.call(__MODULE__, {:update_flow_level, status})
   end
 
   @doc """
@@ -74,18 +64,7 @@ defmodule Timberee.TimberState do
 
   @impl true
   def init(_opts) do
-    state = %{
-      water_level: 50.0,
-      time_remaining: 0,
-      season: "temperate",
-      upcoming_season: "drought",
-      battery_level: 100,
-      flow_level: 0,
-      reservoirs: %{}
-    }
-
-    Logger.info("TimberState GenServer started with initial state: #{inspect(state)}")
-    {:ok, state}
+    {:ok, default_state()}
   end
 
   @impl true
@@ -94,57 +73,64 @@ defmodule Timberee.TimberState do
   end
 
   @impl true
-  def handle_cast({:update_reservoirs, name, fill_percent}, %{reservoirs: reservoirs} = state) do
-    new_state = %{state | reservoirs: Map.put(reservoirs, name, fill_percent)}
-    broadcast_change(new_state)
-    {:noreply, new_state}
+  def handle_call(
+        {:update_reservoirs, name, fill_percent},
+        _from,
+        %{reservoirs: reservoirs} = state
+      ) do
+    set_and_broadcast(%{state | reservoirs: Map.put(reservoirs, name, fill_percent)})
   end
 
   @impl true
-  def handle_cast({:update_water_level, level}, state) do
-    new_state = %{state | water_level: level}
-    broadcast_change(new_state)
-    {:noreply, new_state}
+  def handle_call({:update_water_level, level}, _from, state) do
+    set_and_broadcast(%{state | water_level: level})
   end
 
   @impl true
-  def handle_cast({:update_time_remaining, seconds}, state) do
-    new_state = %{state | time_remaining: seconds}
-    broadcast_change(new_state)
-    {:noreply, new_state}
+  def handle_call({:update_time_remaining, seconds}, _from, state) do
+    set_and_broadcast(%{state | time_remaining: seconds})
   end
 
   @impl true
-  def handle_cast({:update_season, season}, state) do
-    new_state = %{state | season: season}
-    broadcast_change(new_state)
-    {:noreply, new_state}
+  def handle_call({:update_season, season}, _from, state) do
+    set_and_broadcast(%{state | season: season})
   end
 
   @impl true
-  def handle_cast({:update_upcoming_season, upcoming_season}, state) do
-    new_state = %{state | upcoming_season: upcoming_season}
-    broadcast_change(new_state)
-    {:noreply, new_state}
+  def handle_call({:update_upcoming_season, upcoming_season}, _from, state) do
+    set_and_broadcast(%{state | upcoming_season: upcoming_season})
   end
 
   @impl true
-  def handle_cast({:update_battery_level, level}, state) do
-    new_state = %{state | battery_level: level}
-    broadcast_change(new_state)
-    {:noreply, new_state}
+  def handle_call({:update_battery_level, level}, _from, state) do
+    set_and_broadcast(%{state | battery_level: level})
   end
 
   @impl true
-  def handle_cast({:update_flow_level, status}, state) do
-    new_state = %{state | flow_level: status}
-    broadcast_change(new_state)
-    {:noreply, new_state}
+  def handle_call({:update_flow_level, status}, _from, state) do
+    set_and_broadcast(%{state | flow_level: status})
   end
 
   # Private Functions
 
+  defp set_and_broadcast(state) do
+    broadcast_change(new_state)
+    {:noreply, state}
+  end
+
   defp broadcast_change(state) do
     Phoenix.PubSub.broadcast(Timberee.PubSub, @topic, {:state_changed, state})
+  end
+
+  defp default_state do
+    %{
+      reservoirs: %{"lwr" => 78, "upr" => 88},
+      season: "temperate",
+      water_level: 92,
+      upcoming_season: "drought",
+      time_remaining: 0,
+      flow_level: -1,
+      battery_level: 44
+    }
   end
 end
