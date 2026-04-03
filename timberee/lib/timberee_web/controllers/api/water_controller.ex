@@ -5,25 +5,17 @@ defmodule TimbereeWeb.Api.WaterController do
   action_fallback(TimbereeWeb.Api.FallbackController)
 
   def water(conn, %{"level" => level}) when is_binary(level) do
-    case Float.parse(level) do
+    case Integer.parse(level) do
       {level_float, _} ->
         TimberState.update_water_level(level_float)
-        state = TimberState.get_state()
-
-        conn
-        |> put_status(:ok)
-        |> json(%{
-          success: true,
-          message: "Water level updated",
-          state: state
-        })
+        send_json_state(conn, TimberState.get_state(), "Water level updated")
 
       :error ->
         {:error, "Invalid parameter: level must be a float"}
     end
   end
 
-  def water(conn, _params) do
+  def water(_conn, _params) do
     {:error, "Missing required parameter: level"}
   end
 end

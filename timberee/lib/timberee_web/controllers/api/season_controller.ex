@@ -12,15 +12,7 @@ defmodule TimbereeWeb.Api.SeasonController do
       {hours_remaining, _} ->
         TimberState.update_upcoming_season(current)
         TimberState.update_time_remaining(hours_remaining)
-        state = TimberState.get_state()
-
-        conn
-        |> put_status(:ok)
-        |> json(%{
-          success: true,
-          message: "Season and time remaining updated",
-          state: state
-        })
+        send_json_state(conn, TimberState.get_state(), "Season and time remaining updated")
 
       _ ->
         {:error, "Invalid parameter: level must be a float"}
@@ -30,18 +22,10 @@ defmodule TimbereeWeb.Api.SeasonController do
   def season(conn, %{"current" => current}) when current in @seasons do
     TimberState.update_season(current)
     TimberState.update_time_remaining(0)
-    state = TimberState.get_state()
-
-    conn
-    |> put_status(:ok)
-    |> json(%{
-      success: true,
-      message: "Season updated",
-      state: state
-    })
+    send_json_state(conn, TimberState.get_state(), "Season updated")
   end
 
-  def season(conn, _) do
+  def season(_conn, _) do
     {:error, "Missing required parameters: current and remaining"}
   end
 end

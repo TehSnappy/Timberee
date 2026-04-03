@@ -8,7 +8,6 @@ defmodule Timberee.TimberState do
   Broadcasts state changes via PubSub.
   """
   use GenServer
-  require Logger
 
   @topic "timber:state"
 
@@ -114,7 +113,7 @@ defmodule Timberee.TimberState do
   # Private Functions
 
   defp set_and_broadcast(state) do
-    broadcast_change(new_state)
+    broadcast_change(state)
     {:noreply, state}
   end
 

@@ -19,6 +19,22 @@ import Config
 config :timberee,
   generators: [timestamp_type: :utc_datetime]
 
+config :scenic, :assets, module: TimbereeScenic.Assets
+
+config :timberee_scenic, :viewport,
+  name: :main_viewport,
+  size: {800, 600},
+  theme: :dark,
+  default_scene: TimbereeScenic.Scene.Timber,
+  drivers: [
+    [
+      module: Scenic.Driver.Local,
+      name: :local,
+      window: [resizeable: false, title: "timberee"],
+      on_close: :stop_system
+    ]
+  ]
+
 # Configures the endpoint
 config :timberee, TimbereeWeb.Endpoint,
   url: [host: "localhost"],

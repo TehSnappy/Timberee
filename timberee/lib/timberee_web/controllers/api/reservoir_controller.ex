@@ -8,22 +8,14 @@ defmodule TimbereeWeb.Api.ReservoirController do
     case Integer.parse(fill_percent) do
       {fill_percent_int, _} ->
         TimberState.update_reservoirs(current, fill_percent_int)
-        state = TimberState.get_state()
-
-        conn
-        |> put_status(:ok)
-        |> json(%{
-          success: true,
-          message: "Reservoirs updated",
-          state: state
-        })
+        send_json_state(conn, TimberState.get_state(), "Reservoirs updated")
 
       _ ->
         {:error, "Invalid parameter: fill_percent must be an integer"}
     end
   end
 
-  def reservoirs(conn, _) do
+  def reservoirs(_conn, _) do
     {:error, "Missing required parameters: name and fill_percent"}
   end
 end

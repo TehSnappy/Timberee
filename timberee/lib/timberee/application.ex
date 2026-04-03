@@ -3,7 +3,6 @@ defmodule Timberee.Application do
 
   use Application
 
-  @impl true
   def start(_type, _args) do
     children = [
       TimbereeWeb.Telemetry,
@@ -11,7 +10,8 @@ defmodule Timberee.Application do
       {DNSCluster, query: Application.get_env(:timberee, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Timberee.PubSub},
       TimbereeWeb.Endpoint,
-      {Timberee.Display, restart: :transient}
+      TimbereeScenic
+      # {Timberee.Display, restart: :transient}
     ]
 
     opts = [strategy: :one_for_one, name: Timberee.Supervisor]
@@ -20,7 +20,6 @@ defmodule Timberee.Application do
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
-  @impl true
   def config_change(changed, _new, removed) do
     TimbereeWeb.Endpoint.config_change(changed, removed)
     :ok

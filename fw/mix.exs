@@ -58,11 +58,12 @@ defmodule Fw.MixProject do
       {:nerves_runtime, "~> 0.13.12"},
 
       # Dependencies for all targets except :host
-      {:nerves_pack, "~> 0.7.1", targets: @all_targets},
-      {:inky, "~> 1.0"},
+      {:nerves_pack, "~> 0.7.1", targets: @all_targets, override: true},
+      # {:inky, "~> 1.0"},
+      {:elixir_make, "~> 0.9.0", override: true},
       {:circuits_gpio, "~> 2.0", override: true},
-      {:vintage_net_wizard, "~> 0.4"},
-      {:inky_host_dev, "~> 1.0.0", targets: :host, only: :dev},
+      {:vintage_net_wizard, "~> 0.4", override: true},
+      # {:inky_host_dev, "~> 1.0.0", targets: :host, only: :dev},
 
       # Dependencies for specific targets
       # NOTE: It's generally low risk and recommended to follow minor version

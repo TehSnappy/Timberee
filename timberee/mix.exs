@@ -43,7 +43,7 @@ defmodule Timberee.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.1.0-rc.0"},
-      {:lazy_html, ">= 0.1.0", only: :test},
+      {:lazy_html, ">= 0.1.0", only: :test, override: true},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
@@ -61,9 +61,9 @@ defmodule Timberee.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.8"},
       {:dns_cluster, "~> 0.2.0"},
-      {:inky, "~> 1.0"},
-      {:inky_host_dev, "~> 1.0.0", targets: :host, only: :dev},
-
+      # {:inky, "~> 1.0"},
+      # {:inky_host_dev, "~> 1.0.0", targets: :host, only: :dev},
+      {:timberee_scenic, path: "../timberee_scenic"},
       # Added missing comma here
       {:bandit, "~> 1.5"}
     ]

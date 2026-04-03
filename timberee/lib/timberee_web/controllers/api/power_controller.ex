@@ -2,7 +2,7 @@ defmodule TimbereeWeb.Api.PowerController do
   use TimbereeWeb, :controller
   alias Timberee.TimberState
 
-  @seasons ["drought", "badtide", "temperate"]
+  # @seasons ["drought", "badtide", "temperate"]
 
   action_fallback(TimbereeWeb.Api.FallbackController)
 
@@ -11,39 +11,29 @@ defmodule TimbereeWeb.Api.PowerController do
       {int, _} ->
         TimberState.update_flow_level(int)
         state = TimberState.get_state()
-
-        conn
-        |> put_status(:ok)
-        |> json(%{
-          success: true,
-          message: "power flow updated",
-          state: state
-        })
+        send_json_state(conn, state, "power flow updated")
 
       _ ->
         {:error, "Invalid parameter: current must be an integer"}
     end
   end
 
-  def flow(conn, _) do
+  def flow(_conn, _) do
     {:error, "Missing required parameters: current"}
   end
 
   def battery(conn, %{"power" => power}) do
-    {amt, _} = Integer.parse(power)
-    TimberState.update_battery_level(amt)
-    state = TimberState.get_state()
+    case Integer.parse(power) do
+      {amt, _} ->
+        TimberState.update_battery_level(amt)
+        send_json_state(conn, TimberState.get_state(), "Battery updated")
 
-    conn
-    |> put_status(:ok)
-    |> json(%{
-      success: true,
-      message: "Battery updated",
-      state: state
-    })
+      _ ->
+        {:error, "Invalid parameter: power must be a number"}
+    end
   end
 
-  def battery(conn, _) do
+  def battery(_conn, _) do
     {:error, "Missing required parameters: power"}
   end
 end

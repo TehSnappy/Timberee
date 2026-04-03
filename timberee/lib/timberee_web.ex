@@ -42,6 +42,16 @@ defmodule TimbereeWeb do
 
       import Plug.Conn
 
+      def send_json_state(conn, state, message) do
+        conn
+        |> put_status(:ok)
+        |> json(%{
+          success: true,
+          message: message,
+          state: state
+        })
+      end
+
       unquote(verified_routes())
     end
   end
