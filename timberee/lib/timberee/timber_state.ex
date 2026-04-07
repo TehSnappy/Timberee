@@ -22,34 +22,34 @@ defmodule Timberee.TimberState do
   end
 
   def update_water_level(level) when level >= 0 and level <= 100 do
-    GenServer.call(__MODULE__, {:update_water_level, level})
+    GenServer.cast(__MODULE__, {:update_water_level, level})
   end
 
   def update_time_remaining(seconds) when is_integer(seconds) and seconds >= 0 do
-    GenServer.call(__MODULE__, {:update_time_remaining, seconds})
+    GenServer.cast(__MODULE__, {:update_time_remaining, seconds})
   end
 
   @doc """
   Update the season status
   """
   def update_season(season) when is_binary(season) do
-    GenServer.call(__MODULE__, {:update_season, season})
+    GenServer.cast(__MODULE__, {:update_season, season})
   end
 
   def update_upcoming_season(upcoming_season) when is_binary(upcoming_season) do
-    GenServer.call(__MODULE__, {:update_upcoming_season, upcoming_season})
+    GenServer.cast(__MODULE__, {:update_upcoming_season, upcoming_season})
   end
 
   def update_reservoirs(name, fill_percent) when is_binary(name) and is_number(fill_percent) do
-    GenServer.call(__MODULE__, {:update_reservoirs, name, fill_percent})
+    GenServer.cast(__MODULE__, {:update_reservoirs, name, fill_percent})
   end
 
   def update_battery_level(level) when level >= 0 and level <= 100 do
-    GenServer.call(__MODULE__, {:update_battery_level, level})
+    GenServer.cast(__MODULE__, {:update_battery_level, level})
   end
 
   def update_flow_level(status) do
-    GenServer.call(__MODULE__, {:update_flow_level, status})
+    GenServer.cast(__MODULE__, {:update_flow_level, status})
   end
 
   @doc """
@@ -72,41 +72,40 @@ defmodule Timberee.TimberState do
   end
 
   @impl true
-  def handle_call(
+  def handle_cast(
         {:update_reservoirs, name, fill_percent},
-        _from,
         %{reservoirs: reservoirs} = state
       ) do
     set_and_broadcast(%{state | reservoirs: Map.put(reservoirs, name, fill_percent)})
   end
 
   @impl true
-  def handle_call({:update_water_level, level}, _from, state) do
+  def handle_cast({:update_water_level, level}, state) do
     set_and_broadcast(%{state | water_level: level})
   end
 
   @impl true
-  def handle_call({:update_time_remaining, seconds}, _from, state) do
+  def handle_cast({:update_time_remaining, seconds}, state) do
     set_and_broadcast(%{state | time_remaining: seconds})
   end
 
   @impl true
-  def handle_call({:update_season, season}, _from, state) do
+  def handle_cast({:update_season, season}, state) do
     set_and_broadcast(%{state | season: season})
   end
 
   @impl true
-  def handle_call({:update_upcoming_season, upcoming_season}, _from, state) do
+  def handle_cast({:update_upcoming_season, upcoming_season}, state) do
     set_and_broadcast(%{state | upcoming_season: upcoming_season})
   end
 
   @impl true
-  def handle_call({:update_battery_level, level}, _from, state) do
+  def handle_cast({:update_battery_level, level}, state) do
     set_and_broadcast(%{state | battery_level: level})
   end
 
   @impl true
-  def handle_call({:update_flow_level, status}, _from, state) do
+  def handle_cast({:update_flow_level, status}, state) do
     set_and_broadcast(%{state | flow_level: status})
   end
 
@@ -129,7 +128,7 @@ defmodule Timberee.TimberState do
       upcoming_season: "drought",
       time_remaining: 0,
       flow_level: -1,
-      battery_level: 44
+      battery_level: 78
     }
   end
 end

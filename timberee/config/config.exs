@@ -23,7 +23,7 @@ config :scenic, :assets, module: TimbereeScenic.Assets
 
 config :timberee_scenic, :viewport,
   name: :main_viewport,
-  size: {800, 600},
+  size: {800, 480},
   theme: :dark,
   default_scene: TimbereeScenic.Scene.Timber,
   drivers: [

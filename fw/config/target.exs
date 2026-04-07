@@ -99,17 +99,25 @@ config :mdns_lite,
     }
   ]
 
-# Configure Inky pHAT display via SPI
-# The Inky pHAT 400x300 uses SPI for communication
-config :inky,
-  type: :what,
-  accent: :red
-
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations
 
 # import_config "#{Mix.target()}.exs"
+
+config :timberee_scenic, :viewport,
+  name: :main_viewport,
+  size: {800, 480},
+  theme: :dark,
+  default_scene: TimbereeScenic.Scene.Timber,
+  drivers: [
+    [
+      module: Scenic.Driver.Local,
+      name: :local,
+      window: [resizeable: false, title: "timberee"],
+      on_close: :stop_system
+    ]
+  ]
 
 config :timberee, TimbereeWeb.Endpoint,
   url: [host: "Timberee", port: 80, scheme: "http"],

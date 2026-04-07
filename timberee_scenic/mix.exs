@@ -27,7 +27,6 @@ defmodule Timberee.Scenic.MixProject do
     [
       {:scenic, "~> 0.11.0", override: true},
       {:scenic_driver_local, "0.12.0-rc.0"},
-      {:scenic_clock, "~> 0.11.0"},
       {:elixir_make, "~> 0.9.0", override: true}
     ]
   end
