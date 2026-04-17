@@ -21,6 +21,8 @@ config :timberee,
 
 config :scenic, :assets, module: TimbereeScenic.Assets
 
+config :timberee_scenic, :adjustment, width: -280, height: -380
+
 config :timberee_scenic, :viewport,
   name: :main_viewport,
   size: {800, 480},

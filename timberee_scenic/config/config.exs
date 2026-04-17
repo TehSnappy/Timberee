@@ -16,7 +16,8 @@ config :timberee_scenic, :viewport,
       module: Scenic.Driver.Local,
       name: :local,
       window: [resizeable: false, title: "timberee"],
-      on_close: :stop_system
+      on_close: :stop_system,
+      position: [scaled: true, centered: true]
     ]
   ]
 

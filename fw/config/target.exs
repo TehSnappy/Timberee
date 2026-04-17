@@ -104,10 +104,11 @@ config :mdns_lite,
 # Uncomment to use target specific configurations
 
 # import_config "#{Mix.target()}.exs"
+config :timberee_scenic, :adjustment, width: -100, height: -140
 
 config :timberee_scenic, :viewport,
   name: :main_viewport,
-  size: {800, 480},
+  size: {1000, 800},
   theme: :dark,
   default_scene: TimbereeScenic.Scene.Timber,
   drivers: [
@@ -115,7 +116,8 @@ config :timberee_scenic, :viewport,
       module: Scenic.Driver.Local,
       name: :local,
       window: [resizeable: false, title: "timberee"],
-      on_close: :stop_system
+      on_close: :stop_system,
+      position: [scaled: false, centered: false]
     ]
   ]
 

@@ -8,10 +8,14 @@ defmodule Timberee.TimberState do
   Broadcasts state changes via PubSub.
   """
   use GenServer
+  require Logger
 
   @topic "timber:state"
 
   # Client API
+  def subscribe do
+    Phoenix.PubSub.subscribe(Timberee.PubSub, @topic)
+  end
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -113,6 +117,7 @@ defmodule Timberee.TimberState do
 
   defp set_and_broadcast(state) do
     broadcast_change(state)
+    Logger.info("State updated: #{inspect(state)}")
     {:noreply, state}
   end
 
@@ -126,7 +131,7 @@ defmodule Timberee.TimberState do
       season: "temperate",
       water_level: 92,
       upcoming_season: "drought",
-      time_remaining: 0,
+      time_remaining: 20,
       flow_level: -1,
       battery_level: 78
     }

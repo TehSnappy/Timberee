@@ -151,10 +151,10 @@ module face_plate() {
 
         // ② PCB pocket – channel recessed into back face, open at top
         //    PCB slides straight down and rests on the solid ledge at z = pcb_z0.
-        translate([pcb_x0 - pocket_tol,
+        translate([pcb_x0 - pocket_tol - 6,
                    face_wall - pocket_depth,
                    pcb_z0])
-            cube([pcb_w + pocket_tol * 2,
+            cube([pcb_w + pocket_tol * 2 + 5,
                   pocket_depth + 1,       // +1 opens flush with back face
                   face_h - pcb_z0 + 1]);  // extends past top → open slot
     }
