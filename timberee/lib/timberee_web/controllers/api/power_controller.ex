@@ -1,12 +1,15 @@
 defmodule TimbereeWeb.Api.PowerController do
   use TimbereeWeb, :controller
   alias Timberee.TimberState
+  alias Timberee.UsageState
 
   # @seasons ["drought", "badtide", "temperate"]
 
   action_fallback(TimbereeWeb.Api.FallbackController)
 
   def flow(conn, %{"current" => current}) do
+    UsageState.touch()
+
     case Integer.parse(current) do
       {int, _} ->
         TimberState.update_flow_level(int)
@@ -23,6 +26,8 @@ defmodule TimbereeWeb.Api.PowerController do
   end
 
   def battery(conn, %{"power" => power}) do
+    UsageState.touch()
+
     case Integer.parse(power) do
       {amt, _} ->
         TimberState.update_battery_level(amt)

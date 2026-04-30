@@ -56,13 +56,6 @@ defmodule Timberee.TimberState do
     GenServer.cast(__MODULE__, {:update_flow_level, status})
   end
 
-  @doc """
-  Subscribe to state change notifications
-  """
-  def subscribe do
-    Phoenix.PubSub.subscribe(Timberee.PubSub, @topic)
-  end
-
   # Server Callbacks
 
   @impl true

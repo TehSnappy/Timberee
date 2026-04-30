@@ -20,12 +20,15 @@ defmodule TimbereeScenic.Scene.Timber do
 
   def init(scene, _param, _opts) do
     {width, height} = scene.viewport.size
+
     {width, height} = {width, height} |> adjust_for_config()
+    {width, height} = {800, 480}
+
     state = TimberState.get_state()
     TimberState.subscribe()
 
-    baseline = (height - @therm_h) / 2
-    baseline = height - baseline - 150
+    baseline = height - @therm_h
+    baseline = height - baseline + 140
     Logger.warning("Building graph with baseline: #{inspect(baseline)}")
 
     graph = build_graph(state, width, baseline)
@@ -52,10 +55,10 @@ defmodule TimbereeScenic.Scene.Timber do
     Logger.warning("Building graph with split: #{inspect(split)}")
 
     Graph.build(font: :roboto, font_size: 16)
-    |> draw_header(timber_state, split - 120)
-    |> draw_teardrop(timber_state, split - 120, baseline)
+    |> draw_header(timber_state, split)
+    |> draw_teardrop(timber_state, split, baseline)
     |> draw_reservoirs(timber_state, split, baseline)
-    |> draw_batteries(timber_state, split, width - @battery_w * 2 - 40, baseline)
+    |> draw_batteries(timber_state, split, width - 40, baseline)
   end
 
   defp draw_header(
@@ -381,7 +384,7 @@ defmodule TimbereeScenic.Scene.Timber do
     rect(graph, {@therm_w - 4, fill_h}, fill: fill_color(pct), translate: {x + 2, fill_y - 2})
   end
 
-  defp season_time_remaining(%{upcoming_season: "temoerate"}) do
+  defp season_time_remaining(%{upcoming_season: "temperate"}) do
     {100, 200, 100}
   end
 

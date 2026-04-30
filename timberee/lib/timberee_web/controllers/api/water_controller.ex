@@ -1,10 +1,13 @@
 defmodule TimbereeWeb.Api.WaterController do
   use TimbereeWeb, :controller
   alias Timberee.TimberState
+  alias Timberee.UsageState
 
   action_fallback(TimbereeWeb.Api.FallbackController)
 
   def water(conn, %{"level" => level}) when is_binary(level) do
+    UsageState.touch()
+
     case Integer.parse(level) do
       {level_float, _} ->
         TimberState.update_water_level(level_float)

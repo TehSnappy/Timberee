@@ -104,7 +104,7 @@ config :mdns_lite,
 # Uncomment to use target specific configurations
 
 # import_config "#{Mix.target()}.exs"
-config :timberee_scenic, :adjustment, width: -100, height: -140
+config :timberee_scenic, :adjustment, width: 100, height: 140
 
 config :timberee_scenic, :viewport,
   name: :main_viewport,

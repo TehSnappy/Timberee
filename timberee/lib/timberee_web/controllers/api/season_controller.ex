@@ -1,6 +1,7 @@
 defmodule TimbereeWeb.Api.SeasonController do
   use TimbereeWeb, :controller
   alias Timberee.TimberState
+  alias Timberee.UsageState
 
   action_fallback(TimbereeWeb.Api.FallbackController)
 
@@ -8,6 +9,8 @@ defmodule TimbereeWeb.Api.SeasonController do
 
   def season(conn, %{"current" => current, "remaining" => remaining})
       when current in @seasons do
+    UsageState.touch()
+
     case Integer.parse(remaining) do
       {hours_remaining, _} ->
         TimberState.update_upcoming_season(current)
@@ -20,6 +23,7 @@ defmodule TimbereeWeb.Api.SeasonController do
   end
 
   def season(conn, %{"current" => current}) when current in @seasons do
+    UsageState.touch()
     TimberState.update_season(current)
     TimberState.update_time_remaining(0)
     send_json_state(conn, TimberState.get_state(), "Season updated")

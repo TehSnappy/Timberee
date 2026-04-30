@@ -1,0 +1,40 @@
+# Nerves RPi Zero 2 W config.txt - project override
+
+# Enable 64-bit support (required for rpi0_2)
+arm_64bit=1
+
+# Disable the boot rainbow
+disable_splash=1
+
+# GPU memory for camera support
+gpu_mem=192
+
+# Enable I2C, SPI, and audio
+dtparam=i2c_arm=on
+dtparam=spi=on
+dtparam=audio=on
+
+dtoverlay=dwc2
+dtoverlay=ramoops
+
+# Enable the UART on the RPi Zero 2 W
+enable_uart=1
+dtoverlay=miniuart-bt
+core_freq=250
+
+dtparam=act_led_activelow=on
+dtparam=act_led_trigger=heartbeat
+
+# Enable DRM VC4 V3D driver for display
+dtoverlay=vc4-kms-v3d,cma-128
+max_framebuffers=2
+disable_fw_kms_setup=1
+
+# HDMI display settings for 800x480 panel
+hdmi_force_hotplug=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt=800 480 60 6 0 0 0
+hdmi_drive=1
+
+max_usb_current=1

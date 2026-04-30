@@ -9,6 +9,7 @@ defmodule Timberee.Application do
       Timberee.TimberState,
       {DNSCluster, query: Application.get_env(:timberee, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Timberee.PubSub},
+      Timberee.UsageState,
       TimbereeWeb.Endpoint,
       TimbereeScenic
       # {Timberee.Display, restart: :transient}

@@ -1,10 +1,13 @@
 defmodule TimbereeWeb.Api.ReservoirController do
   use TimbereeWeb, :controller
   alias Timberee.TimberState
+  alias Timberee.UsageState
 
   action_fallback(TimbereeWeb.Api.FallbackController)
 
   def reservoirs(conn, %{"name" => current, "fill_percent" => fill_percent}) do
+    UsageState.touch()
+
     case Integer.parse(fill_percent) do
       {fill_percent_int, _} ->
         TimberState.update_reservoirs(current, fill_percent_int)

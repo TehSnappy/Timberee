@@ -59,6 +59,7 @@ defmodule Fw.MixProject do
 
       # Dependencies for all targets except :host
       {:nerves_pack, "~> 0.7.1", targets: @all_targets, override: true},
+      {:pigpiox, "~> 0.1", targets: @all_targets},
       # {:inky, "~> 1.0"},
       {:elixir_make, "~> 0.9.0", override: true},
       {:circuits_gpio, "~> 2.0", override: true},

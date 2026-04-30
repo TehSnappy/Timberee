@@ -17,6 +17,7 @@ defmodule TimbereeWeb.Router do
   scope "/", TimbereeWeb do
     pipe_through(:browser)
     live("/", DashboardLive)
+    live("/settings", SettingsLive)
   end
 
   scope "/api", TimbereeWeb do
