@@ -9,19 +9,17 @@ defmodule TimbereeScenic.Scene.Timber do
   @therm_h 300
   @therm_gap 20
   # top of thermometer body — centers the element block vertically in the 540px body area
-  @therm_top_y 60
+  # @therm_top_y 60
   @label_font_size 18
   @battery_w 140
   @battery_nut 30
   @battery_height 240
-  @water_height 240
-  @water_width 120
   @impl Scenic.Scene
 
   def init(scene, _param, _opts) do
-    {width, height} = scene.viewport.size
+    #  {width, height} = scene.viewport.size
 
-    {width, height} = {width, height} |> adjust_for_config()
+    # {width, height} = {width, height} |> adjust_for_config()
     {width, height} = {800, 480}
 
     state = TimberState.get_state()
@@ -41,7 +39,7 @@ defmodule TimbereeScenic.Scene.Timber do
     {:ok, scene}
   end
 
-  @impl GenServer
+  @impl true
   def handle_info(
         {:state_changed, tb_state},
         %{assigns: %{width: width, baseline: baseline}} = scene
@@ -91,10 +89,10 @@ defmodule TimbereeScenic.Scene.Timber do
     end
   end
 
-  defp draw_reservoirs(graph, %{reservoirs: reservoirs}, width, baseline) do
+  defp draw_reservoirs(graph, %{reservoirs: reservoirs}, _width, baseline) do
     sorted = reservoirs |> Map.to_list() |> Enum.sort_by(fn {name, _} -> name end)
-    count = length(sorted)
-    total_w = count * @therm_w + max(count - 1, 0) * @therm_gap
+    # count = length(sorted)
+    # total_w = count * @therm_w + max(count - 1, 0) * @therm_gap
     start_x = 40
 
     sorted
@@ -108,12 +106,15 @@ defmodule TimbereeScenic.Scene.Timber do
   defp draw_batteries(
          graph,
          %{flow_level: flow_level, battery_level: battery_level},
-         width,
+         _width,
          offset,
          baseline
        ) do
     start_x = offset - @battery_w
-    draw_battery(graph, battery_level, flow_level, start_x, baseline)
+
+    graph
+    |> draw_battery(battery_level, start_x, baseline)
+    |> draw_battery_chevrons(flow_level, start_x, baseline)
   end
 
   @drop_r 50
@@ -295,29 +296,29 @@ defmodule TimbereeScenic.Scene.Timber do
   defp drop_water_color(pct) when pct < 50, do: {180, 140, 60}
   defp drop_water_color(_pct), do: {60, 140, 240}
 
-  defp draw_battery(graph, battery_level, flow_level, x, baseline) do
+  defp draw_battery(graph, battery_level, x, baseline) do
     battery_level = battery_level |> max(0) |> min(100)
     fill_y = round(battery_level / 100 * @battery_height)
     fill_offset = baseline - fill_y
-    battery_y_offfset = baseline - @battery_height
+    battery_y_offset = baseline - @battery_height
 
     graph
     |> rect(
       {@battery_w, @battery_height},
       fill: {30, 30, 50},
       stroke: {2, {80, 80, 150}},
-      translate: {x, battery_y_offfset}
+      translate: {x, battery_y_offset}
     )
     |> rect(
       {@battery_nut, @battery_nut},
       fill: {30, 30, 50},
       stroke: {2, {80, 80, 150}},
-      translate: {x + @battery_w / 2 - @battery_nut / 2, battery_y_offfset - @battery_nut}
+      translate: {x + @battery_w / 2 - @battery_nut / 2, battery_y_offset - @battery_nut}
     )
     |> rect(
       {@battery_w - 4, min(fill_y, @therm_h - @battery_nut)},
-      fill: get_battery_fill_color(flow_level),
-      stroke: {2, get_battery_fill_color(flow_level)},
+      fill: get_battery_fill_color(battery_level),
+      stroke: {2, get_battery_fill_color(battery_level)},
       translate: {x + 2, fill_offset}
     )
     |> text(
@@ -336,22 +337,87 @@ defmodule TimbereeScenic.Scene.Timber do
     )
   end
 
-  defp get_battery_fill_color(flow_level) do
-    case flow_level do
-      -3 -> {250, 100, 100}
-      -2 -> {220, 100, 100}
-      -1 -> {170, 100, 100}
-      0 -> {100, 100, 100}
-      1 -> {100, 170, 100}
-      2 -> {100, 220, 100}
-      3 -> {100, 250, 100}
-    end
+  defp get_battery_fill_color(battery_level) when battery_level > 75, do: {100, 220, 100}
+  defp get_battery_fill_color(battery_level) when battery_level > 60, do: {100, 200, 100}
+  defp get_battery_fill_color(battery_level) when battery_level > 50, do: {100, 170, 100}
+  defp get_battery_fill_color(battery_level) when battery_level > 40, do: {100, 100, 100}
+  defp get_battery_fill_color(battery_level) when battery_level > 30, do: {120, 100, 100}
+  defp get_battery_fill_color(battery_level) when battery_level > 20, do: {180, 100, 100}
+  defp get_battery_fill_color(battery_level) when battery_level > 10, do: {220, 100, 100}
+  defp get_battery_fill_color(_battery_level), do: {250, 100, 100}
+
+  def draw_battery_chevrons(graph, 0, _, _), do: graph
+
+  def draw_battery_chevrons(graph, 1, x, baseline),
+    do: graph |> draw_chevron_up(x, baseline - 120)
+
+  def draw_battery_chevrons(graph, 2, x, baseline),
+    do:
+      graph
+      |> draw_chevron_up(x, baseline - 120)
+      |> draw_chevron_up(x, baseline - 140)
+
+  def draw_battery_chevrons(graph, 3, x, baseline),
+    do:
+      graph
+      |> draw_chevron_up(x, baseline - 120)
+      |> draw_chevron_up(x, baseline - 140)
+      |> draw_chevron_up(x, baseline - 160)
+
+  def draw_battery_chevrons(graph, -1, x, baseline),
+    do: graph |> draw_chevron_down(x, baseline - 100)
+
+  def draw_battery_chevrons(graph, -2, x, baseline),
+    do:
+      graph
+      |> draw_chevron_down(x, baseline - 80)
+      |> draw_chevron_down(x, baseline - 100)
+
+  def draw_battery_chevrons(graph, -3, x, baseline),
+    do:
+      graph
+      |> draw_chevron_down(x, baseline - 60)
+      |> draw_chevron_down(x, baseline - 80)
+      |> draw_chevron_down(x, baseline - 100)
+
+  defp draw_chevron_up(graph, x, y) do
+    chevron_w = 60
+    chevron_h = 14
+    x = x + @battery_w / 2 - chevron_w / 2
+
+    graph
+    |> path(
+      [
+        :begin,
+        {:move_to, x, y},
+        {:line_to, x + chevron_w / 2, y - chevron_h},
+        {:line_to, x + chevron_w, y}
+      ],
+      stroke: {6, :white}
+    )
+  end
+
+  defp draw_chevron_down(graph, x, y) do
+    chevron_w = 60
+    chevron_h = 14
+    x = x + @battery_w / 2 - chevron_w / 2
+
+    graph
+    |> path(
+      [
+        :begin,
+        {:move_to, x, y},
+        {:line_to, x + chevron_w / 2, y + chevron_h},
+        {:line_to, x + chevron_w, y}
+      ],
+      stroke: {6, :white}
+    )
   end
 
   defp draw_thermometer(graph, name, pct, x, baseline) do
     pct = pct |> max(0) |> min(100)
     fill_h = round(pct / 100 * @therm_h)
-    fill_y = @therm_top_y + @therm_h - fill_h
+    # fill_y = @therm_top_y + @therm_h - fill_h
     fill_y_start = baseline - fill_h
 
     graph
@@ -394,11 +460,6 @@ defmodule TimbereeScenic.Scene.Timber do
 
   defp season_time_remaining(%{upcoming_season: "badtide"}) do
     {200, 100, 100}
-  end
-
-  defp adjust_for_config({width, height}) do
-    adj = Application.get_env(:timberee_scenic, :adjustment, width: 0, height: 0)
-    {width - adj[:width], height - adj[:height]}
   end
 
   defp fill_color(pct) when pct < 25, do: {200, 60, 60}
